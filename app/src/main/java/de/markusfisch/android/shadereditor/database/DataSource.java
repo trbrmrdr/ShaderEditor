@@ -373,6 +373,12 @@ public class DataSource {
 		return in.read(b) == l ? new String(b, "UTF-8") : null;
 	}
 
+    private static byte[] loadBitmapResource(Context context) {
+        return bitmapToPng(BitmapFactory.decodeResource(
+                context.getResources(),
+                R.drawable.thumbnail_new_shader));
+    }
+
 	private static byte[] loadBitmapResource(Context context, int id) {
 		return bitmapToPng(BitmapFactory.decodeResource(
 				context.getResources(),
@@ -416,35 +422,67 @@ public class DataSource {
 
 	private void insertInitalShaders(SQLiteDatabase db, Context context) {
 		try {
-			DataSource.insertShader(
-					db,
-					loadRawResource(
-							context,
-							R.raw.shader_color_hole),
-					loadBitmapResource(
-							context,
-							R.drawable.thumbnail_color_hole),
+            /*
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.shader_color_hole),
+                    loadBitmapResource(context, R.drawable.thumbnail_color_hole),
 					1f);
 
-			DataSource.insertShader(
-					db,
-					loadRawResource(
-							context,
-							R.raw.shader_gravity),
-					loadBitmapResource(
-							context,
-							R.drawable.thumbnail_gravity),
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.shader_gravity),
+                    loadBitmapResource(context, R.drawable.thumbnail_gravity),
 					1f);
 
-			DataSource.insertShader(
-					db,
-					loadRawResource(
-							context,
-							R.raw.shader_laser_lines),
-					loadBitmapResource(
-							context,
-							R.drawable.thumbnail_laser_lines),
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.shader_laser_lines),
+                    loadBitmapResource(context, R.drawable.thumbnail_laser_lines),
+                    1f);
+
+            //################################
+            */
+
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.color_rain),
+                    loadBitmapResource(context),
+                    1f);
+
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.colorful_voronoi),
+                    loadBitmapResource(context),
+                    1f);
+
+            //DataSource.insertShader(db,
+            //        loadRawResource(context, R.raw.scene1),
+            //        loadBitmapResource(context),
+            //        1f);
+
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.eye_tybe),
+                    loadBitmapResource(context),
 					1f);
+
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.night_start_simulation),
+                    loadBitmapResource(context),
+                    1f);
+
+           //DataSource.insertShader(db,
+           //        loadRawResource(context, R.raw.scene1_1),
+           //        loadBitmapResource(context),
+           //        1f);
+
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.horizont_sector_lines),
+                    loadBitmapResource(context),
+                    1f);
+
+            DataSource.insertShader(db,
+                    loadRawResource(context, R.raw.scene3_home_),
+                    loadBitmapResource(context),
+                    1f);
+
+
+
 		} catch (IOException e) {
 			// shouldn't ever happen in production
 			// and nothing can be done if it does

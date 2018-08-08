@@ -114,8 +114,18 @@ public class MainActivity
 		drawerToggle.onConfigurationChanged(newConfig);
 	}
 
+
+    float m_virtual_x = .0f;
+    float m_virtual_y = .0f;
+
+    final float m_dy = .001f;
+    final float m_dx = .001f;
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent e) {
+        float t_x = .0f;
+        float t_y = .0f;
+
 		if (keyCode == KeyEvent.KEYCODE_MENU) {
 			if (drawerLayout.isDrawerOpen(menuFrame)) {
 				closeDrawer();
@@ -124,6 +134,28 @@ public class MainActivity
 			}
 
 			return true;
+        } else if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (toolbar.getVisibility() == View.GONE) {
+                toggleCode();
+                return true;
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            t_x -= m_dx;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            t_x += m_dx;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            t_y += m_dy;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            t_y -= m_dy;
+        }
+
+        if (Math.abs(t_x) >= m_dx || Math.abs(t_y) >= m_dy) {
+            m_virtual_x += t_x;
+            m_virtual_y += t_y;
+            m_virtual_x = m_virtual_x < .0f ? .0f : m_virtual_x > 1.f ? 1.f : m_virtual_x;
+            m_virtual_y = m_virtual_y < .0f ? .0f : m_virtual_y > 1.f ? 1.f : m_virtual_y;
+            shaderView.getRenderer().virtualTouch(m_virtual_x, m_virtual_y);
+            //return true;
 		}
 
 		return super.onKeyDown(keyCode, e);
@@ -260,7 +292,7 @@ public class MainActivity
 	protected void onCreate(Bundle state) {
 		super.onCreate(state);
 		setContentView(R.layout.activity_main);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		initSystemBars(this);
 		initToolbar();
 		initQualitySpinner();
@@ -703,7 +735,20 @@ public class MainActivity
 			return;
 		}
 
-		drawerLayout.setTouchThru(editorFragment.toggleCode());
+        boolean visible = editorFragment.toggleCode();
+
+        if (visible) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+
+            toolbar.setVisibility(View.GONE);
+        } else {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+            toolbar.setVisibility(View.VISIBLE);
+        }
+        drawerLayout.setTouchThru(visible);
 	}
 
 	private void addShader() {

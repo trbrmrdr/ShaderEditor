@@ -1,0 +1,68 @@
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+
+#if 1
+uniform vec2 mouse;
+uniform vec2 resolution;
+uniform float time;
+
+#define iMouse mouse
+#define iResolution resolution
+#define iGlobalTime time
+#else
+uniform vec3 iMouse;
+uniform vec2 iResolution;
+uniform float iGlobalTime;
+#endif
+
+uniform float lowFreq;
+uniform float midFreq;
+uniform float highFreq;
+
+
+
+
+void main( void ) {
+    float iMouse_pos = iMouse.x/iResolution.x;
+    vec2 uv = .987 * gl_FragCoord.xy / iResolution.y;
+    float t = time*.01;//.01125;
+    float k = cos(t); 
+    float l = sin(t);        
+    
+    float s = .456+midFreq;
+    float tmp = .963 +lowFreq*.003;
+    for(int i=0; i<96; ++i) {
+        uv  = abs(uv) - s;    // Mirror
+        uv *= mat2(k,-l,l,k); // Rotate
+        s  *= tmp;//0.963;// * tmp;         // Scale
+    }
+    
+     float x = .5 + .5*cos((3.28318+(2.-midFreq*4.))*337.*length(uv));
+
+        gl_FragColor = vec4(
+            //vec3(length(uv)*37.0,0.755*x, 0.955/x),
+            vec3(length(uv)*37.*lowFreq,
+            (.5+lowFreq)*x,
+            1.*(1.-lowFreq)/x),
+        0.65);
+
+
+        float fix_size = 1000.;
+        vec2 uv_t = gl_FragCoord.xy / fix_size;
+        vec4 newCol = gl_FragColor;
+
+    if(uv_t.x<=.1 && uv_t.y<=lowFreq)
+        newCol = vec4(vec3(1.),.1);
+    
+    if(uv_t.x >=.15 && uv_t.x<=.3 && uv_t.y<=midFreq)
+       newCol = vec4(vec3(.7),.1);
+    
+    if(uv_t.x >=.45 && uv_t.x<=.7 && uv_t.y<=highFreq)
+       newCol = vec4(vec3(.3),.1);
+
+
+    gl_FragColor = newCol;
+}

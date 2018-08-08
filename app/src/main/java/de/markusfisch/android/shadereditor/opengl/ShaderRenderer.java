@@ -615,6 +615,11 @@ public class ShaderRenderer implements GLSurfaceView.Renderer {
 		}
 	}
 
+	public void virtualTouch(float x,float y){
+		mouse[0] = x;// / resolution[0];
+		mouse[1] = 1 - y;// / resolution[1];
+	}
+
 	public void touchAt(MotionEvent e) {
 		float x = e.getX() * quality;
 		float y = e.getY() * quality;
